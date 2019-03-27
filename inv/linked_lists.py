@@ -8,6 +8,7 @@ import toolz as tz
 
 # * 8. Implement a Linked List
 
+@functools.total_ordering
 class Node(object):
     def __init__(self, val, _next=None):
         self.val = val
@@ -20,7 +21,18 @@ class Node(object):
         return hash(self.val)
 
     def __eq__(self, other):
-        return isinstance(other, Node) and self.val == other.val
+        if isinstance(other, Node):
+            return self.val == other.val
+        elif isinstance(other, int):
+            return self.val == other
+        return False
+
+    def __lt__(self, other):
+        if isinstance(other, Node):
+            return self.val < other.val
+        elif isinstance(other, int):
+            return self.val < other
+        return False
 
 class LinkedList(object):
     def __init__(self):
@@ -196,7 +208,10 @@ x.append(1)
 
 class LinkedList2(LinkedList):
     def kth_last(self, k):
-        pass
+        try:
+            return tz.nth(len(self) - k - 1, self)
+        except (ValueError, StopIteration):
+            return
 
 x = LinkedList2()
 x.append(0)
@@ -204,3 +219,46 @@ x.append(1)
 x.append(2)
 x.append(3)
 x.append(4)
+
+# x.kth_last(2)
+
+# * 3. Node Deletion (already implemented)
+
+# * 4. Partition a linked list on X
+
+# Partition a linked list around a value x, such that all nodes less than x
+# come before all nodes greater than or equal to x.
+
+class LinkedList4(LinkedList):
+    def partition(self, x):
+        node = self.head
+
+        prev_node_lt = None
+        chain = LinkedList()
+
+        while node:
+            if node >= x:
+                chain.append(node.val)
+                prev_node_lt._next = node._next
+            else:
+                prev_node_lt = node
+
+            node = node._next
+
+        prev_node_lt._next = chain.head
+
+x = LinkedList4()
+x.append(0)
+x.append(1)
+x.append(2)
+x.append(3)
+x.append(4)
+x.append(5)
+x.append(0)
+x.append(1)
+x.append(2)
+x.append(3)
+x.append(4)
+x.append(5)
+
+# x.partition(2)
