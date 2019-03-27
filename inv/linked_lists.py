@@ -3,10 +3,12 @@
 # Linked List Questions
 
 import collections
+import itertools
 import functools
 import toolz as tz
 
-# * 8. Implement a Linked List
+# * 8. Implement a Linked List (base-class for rest)
+# ** Node
 
 @functools.total_ordering
 class Node(object):
@@ -34,6 +36,14 @@ class Node(object):
             return self.val < other
         return False
 
+    def __add__(self, other):
+        if isinstance(other, Node):
+            return self.val + other.val
+        elif isinstance(other, int):
+            return self.val + other
+
+# ** LinkedList
+
 class LinkedList(object):
     def __init__(self):
         self.head = None
@@ -60,7 +70,7 @@ class LinkedList(object):
     def nth(self, n):
         return tz.nth(n, self)
 
-    # ** Insertion
+    # *** Insertion
 
     def insert_at(self, ix, val):
         if ix == 0:
@@ -91,7 +101,7 @@ class LinkedList(object):
 
         self.tail._next = item
 
-    # ** Deletion
+    # *** Deletion
 
     def remove_at(self, ix):
         if not self:
@@ -125,7 +135,7 @@ class LinkedList(object):
         if ix:
             self.remove_at(ix)
 
-    # ** Finding
+    # *** Finding
 
     def find(self, val):
         try:
@@ -262,3 +272,66 @@ x.append(4)
 x.append(5)
 
 # x.partition(2)
+
+# * 5. Add two numbers whose digits are stored in a linked list
+
+# Add two numbers whose digits are stored in a linked list in reverse order
+
+# 1234 -> + 4 3 2 1
+# 123 ->    3 2 1
+# 1357
+
+# 987 -> + 7 8 9
+# 87 ->    7 8
+# 1074
+
+
+class LinkedList5(LinkedList):
+    def __add__(self, other):
+        partials = [x+y for x, y in
+                    itertools.zip_longest(self, other, fillvalue=0)]
+        digits = len(partials)-1
+        potential_digit = None
+
+        for ix, partial in enumerate(partials):
+            if partial < 10:
+                continue
+
+            if ix+1 > digits:
+                potential_digit = 1
+            else:
+                partials[ix+1] += 1
+            partials[ix] -= 10
+
+        if potential_digit:
+            partials.append(potential_digit)
+
+        return int("".join(map(str, reversed(partials))))
+
+
+x = LinkedList5()
+x.push(1)
+x.push(2)
+x.push(3)
+x.push(4)
+y = LinkedList5()
+y.push(1)
+y.push(2)
+y.push(3)
+
+# x+y
+
+x = LinkedList5()
+x.push(9)
+x.push(8)
+x.push(7)
+y = LinkedList5()
+y.push(8)
+y.push(7)
+
+# x+y
+
+# * 6. Find the start of a linked list loop
+
+class LinkedList6(LinkedList):
+    pass
