@@ -225,3 +225,15 @@ class HashTable(object):
 
 # x = HashTable(foo=0, bar=1, bro=2)
 # x[1] = 7
+
+# * 9. Fizzbuzz
+
+def fizzbuzz(n):
+    return ["FizzBuzz"
+            if x % 15 == 0 else
+            "Fizz"
+            if x % 3 == 0 else
+            "Buzz"
+            if x % 5 == 0 else
+            x
+            for x in range(n)]
