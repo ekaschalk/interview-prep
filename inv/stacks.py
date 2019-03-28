@@ -82,3 +82,113 @@ x.push(1, 0)
 x.push(2, 0)
 x.push(1, 1)
 x.push(2, 2)
+
+# * 2. Stack that keeps track of its minimum element
+
+# Constraints: push, pop, and min are O(1)
+
+@functools.total_ordering
+class Node(object):
+    def __init__(self, item, _next=None):
+        self.item = item
+        self._next = _next
+
+    def __repr__(self):
+        return repr(self.item)
+
+    def __eq__(self, other):
+        return self.item == other.item
+
+    def __lt__(self, other):
+        return self.item < other.item
+
+class Stacks2(object):
+    __maxint = 100
+
+    def __init__(self):
+        self.head = None
+        self.mins = []
+
+    @property
+    def minimum(self):
+        return self.mins[-1]
+
+    def push(self, item):
+        if not self.mins:
+            self.mins.append(item)
+        else:
+            self.mins.append(item if item < self.minimum else self.minimum)
+
+        item = Node(item)
+
+        if self.head is None:
+            self.head = item
+            return
+
+        self.head._next = item
+
+    def pop(self):
+        if self.head is None:
+            return
+
+        self.mins.pop()
+        self.head, prev_head = self.head._next, self.head
+
+        return prev_head
+
+
+x = Stacks2()
+
+x.push(1)
+x.push(2)
+x.push(0)
+x.pop()
+x.push(5)
+x.push(3)
+x.push(0)
+x.minimum
+
+# * 3. SetOfStacks that wraps list of stacks, each stack bounded
+
+# bounded by capacity
+
+# Boring question skipping
+
+# * 4. Implement a queue using two stacks
+
+class Queue4(object):
+    def __init__(self):
+        self.stack1 = []
+        self.stack2 = []
+        self._cur_stack = self.stack1
+        self._temp_stack = self.stack2
+
+    def __repr__(self):
+        return repr(self._cur_stack)
+
+    def shift_stacks(self):
+        while self._cur_stack:
+            self._temp_stack.append(self._cur_stack.pop())
+
+        self._cur_stack, self._temp_stack = self._temp_stack, self._cur_stack
+
+    def enqueue(self, item):
+        self._cur_stack.append(item)
+
+    def dequeue(self):
+        self.shift_stacks()
+        item = self._cur_stack.pop()
+        self.shift_stacks()
+
+        return item
+
+
+
+x = Queue4()
+x.enqueue(1)
+x.enqueue(2)
+x.enqueue(3)
+x.enqueue(4)
+x.enqueue(5)
+x.dequeue()
+x.enqueue(6)
