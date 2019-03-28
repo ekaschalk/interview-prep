@@ -192,3 +192,75 @@ x.enqueue(4)
 x.enqueue(5)
 x.dequeue()
 x.enqueue(6)
+
+# * 5. Sort a stack with another stack as a buffer
+
+class Stack5(object):
+    def __init__(self):
+        self.stack = []
+
+    def __repr__(self):
+        return repr(self.stack)
+
+    def push(self, item):
+        self.stack.append(item)
+
+    def _shift_stacks(self, src, dest, insert=None):
+        more_to_sort = False
+        inserting = insert is not None
+
+        if not src and inserting:
+            return False
+
+        while src:
+            item = src.pop()
+
+            if not more_to_sort and inserting and item > insert:
+                dest.append(insert)
+                more_to_sort = True
+
+            dest.append(item)
+
+        return more_to_sort
+
+    def sort(self):
+        if not self.stack:
+            return
+
+        buffer_ = []
+        more_to_sort = True
+
+        while more_to_sort:
+            item = self.stack.pop()
+            self._shift_stacks(self.stack, buffer_)
+            more_to_sort = self._shift_stacks(buffer_, self.stack, insert=item)
+
+        self.stack.append(item)
+
+# [1 2 3 4 5 2]
+# pop() = 2
+# 5 4 3 2 1
+# => ins
+# 5 4 3 2 1 2
+# => flip
+
+# [1 2 2 3 4 5]
+# pop() = 5
+# 4 3 2 2 1
+# => buffer_ is exhaused without a (strict) inequality found
+# => done
+
+# TEST CASE
+# [0, 1, 2, 3, 2, -1, 2]
+# =>
+# [-1, 0, 1, 2, 2, 2, 3]
+
+x = Stack5()
+x.push(0)
+x.push(0)
+x.push(1)
+x.push(2)
+x.push(3)
+x.push(2)
+x.push(-1)
+x.push(2)
