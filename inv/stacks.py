@@ -264,3 +264,51 @@ x.push(3)
 x.push(2)
 x.push(-1)
 x.push(2)
+
+# * 8. Implement a priority queue backed by an array
+
+@functools.total_ordering
+class Node(object):
+    def __init__(self, item, priority):
+        self.item = item
+        self.priority = priority
+
+    def __repr__(self):
+        return repr(self.item)
+
+    def __eq__(self, other):
+        return self.priority == other.priority
+
+    def __lt__(self, other):
+        return self.priority < other.priority
+
+
+class PriorityQueue(object):
+    def __init__(self):
+        self._arr = []
+
+    def __repr__(self):
+        return repr(self._arr)
+
+    def enqueue(self, item, priority):
+        node = Node(item, priority)
+
+        try:
+            ix = next(i for i, x in enumerate(self._arr) if x > node)
+            self._arr.insert(ix, node)
+        except StopIteration:
+            self._arr.append(node)
+
+    def dequeue(self):
+        return self._arr.pop()
+
+
+# [0, 1, 2, '2-3', 3, 4]
+x = PriorityQueue()
+x.enqueue(1, 1)
+x.enqueue(2, 10)
+x.enqueue(3, 100)
+x.enqueue(0, 0)
+x.enqueue(4, 1000)
+x.enqueue("2-3", 50)
+# x.dequeue()
