@@ -434,3 +434,24 @@ node5._next = node2
 #      so working backwards, we would end up T away from finish
 #      when they both match
 # 3. So if we move T forward from start and where we stopped, we found cycle start
+
+# * 7. Determine if a linked list is a palindrome
+
+# This solution is kind-of-cheeky
+
+class LinkedList7(LinkedList):
+    def palindrome(self):
+        items = list(iter(self))
+
+        return items == list(reversed(items))
+
+x = LinkedList7()
+x.append(1)
+x.append(2)
+x.append(3)
+x.append(4)
+x.append(3)
+x.append(2)
+x.append(1)
+
+# x.palindrome()
