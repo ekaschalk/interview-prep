@@ -290,7 +290,15 @@ class PriorityQueue(object):
     def __repr__(self):
         return repr(self._arr)
 
-    def enqueue(self, item, priority):
+    def __len__(self):
+        return len(self._arr)
+
+    def __getitem__(self, ix):
+        return self._arr[ix]
+
+    # * O(n)
+
+    def enqueue_linear(self, item, priority):
         node = Node(item, priority)
 
         try:
@@ -298,6 +306,25 @@ class PriorityQueue(object):
             self._arr.insert(ix, node)
         except StopIteration:
             self._arr.append(node)
+
+    # * O(log(n))
+
+    def _search(self, node, a=0, b=None):
+        b = len(self) if b is None else b
+        m = (a + b) // 2
+
+        if a >= b or self[m] == node:
+            return m
+        elif self[m] < node:
+            return self._search(node, a=m+1, b=b)
+        elif self[m] > node:
+            return self._search(node, a=a, b=m)
+
+    def enqueue(self, item, priority):
+        node = Node(item, priority)
+
+        ix = self._search(node)
+        self._arr.insert(ix, node)
 
     def dequeue(self):
         return self._arr.pop()
