@@ -43,7 +43,7 @@ class BST(object):
             self.insert(item)
 
     def __iter__(self):
-        yield from self.pre_order
+        yield from self.in_order
 
     def __len__(self):
         return len(list(iter(self)))
@@ -64,20 +64,23 @@ class BST(object):
     def find(self, item):
         return self._find(item, self.head)
 
+    def _insert_left(self, item, node):
+        if node.left is None:
+            node.left = Node(item)
+        else:
+            self._insert(item, node.left)
+
+    def _insert_right(self, item, node):
+        if node.right is None:
+            node.right = Node(item)
+        else:
+            self._insert(item, node.right)
+
     def _insert(self, item, node):
         if item <= node:
-            if node.left is None:
-                node.left = Node(item)
-                return
-
-            return self._insert(item, node.left)
+            self._insert_left(item, node)
         else:
-            if node.right is None:
-                node.right = Node(item)
-                return
-
-            return self._insert(item, node.right)
-        return
+            self._insert_right(item, node)
 
     def insert(self, item):
         if self.head is None:
@@ -91,39 +94,51 @@ class BST(object):
 
     # ** Traversal
 
-    def _pre_order(self, node, stack):
-        if node is None:
-            return
-
+    def _in_order(self, node):
         if node.left:
-            stack.append(node.left)
-            self._pre_order(node.left, stack)
-
+            yield from self._in_order(node.left)
+        yield node
         if node.right:
-            stack.append(node.right)
-            self._pre_order(node.right, stack)
+            yield from self._in_order(node.right)
 
-    @property
-    def pre_order(self):
-        stack = [self.head] if self.head else []
-        self._pre_order(self.head, stack)
+    def _pre_order(self, node):
+        yield node
+        if node.left:
+            yield from self._pre_order(node.left)
+        if node.right:
+            yield from self._pre_order(node.right)
 
-        while stack:
-            yield stack.pop()
+    def _post_order(self, node):
+        yield node
+        if node.right:
+            yield from self._post_order(node.right)
+        if node.left:
+            yield from self._post_order(node.left)
 
     @property
     def in_order(self):
-        pass
+        yield from self._in_order(self.head)
+
+    @property
+    def pre_order(self):
+        yield from self._pre_order(self.head)
 
     @property
     def post_order(self):
-        pass
+        yield from self._post_order(self.head)
 
     @property
     def level_ordered(self):
         pass
 
 
-# x = BST(1, 2, 3, 4)
-# x = BST(4, 2, 3, 1)
-x = BST(1, 2, 3, 1, 2, 5, 2)
+x = BST(5, 2, 8, 1, 3)
+pre = [5, 2, 1, 3, 8]
+in_ = [1, 2, 3, 5, 8]
+post = [1, 3, 2, 8, 5]
+# assert(post == list(x.post_order))
+
+# x = BST(1, 2, 3, 4, 5)
+# pre = [1, 2, 3, 4, 5]
+# in_ = [1, 2, 3, 4, 5]
+# post = [5, 4, 3, 2, 1]
