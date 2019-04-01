@@ -247,3 +247,38 @@ x = BST4(0, 1, 2, 3, 4, 5, 6)
 
 x = BST4(0, 1, 2, 3, 4, 5, 6, 7)
 # x.height == 4
+
+# * 5. Create a linkedlist for each level of a binary tree
+
+class BST5(BST):
+    def _to_lists(self, q):
+        if not q:
+            return
+
+        node, level = q.dequeue()
+        yield node, level
+
+        if node.left:
+            q.enqueue((node.left, level+1))
+        if node.right:
+            q.enqueue((node.right, level+1))
+
+        yield from self._to_lists(q)
+
+    def to_lists(self):
+        getlevel = lambda x: x[1]
+
+        if not self.head:
+            return
+
+        pairs = self._to_lists(Queue([(self.head, 0)]))
+        for _, node_level_pairs in tz.groupby(getlevel, pairs).items():
+            yield [nodes for nodes, _ in node_level_pairs]
+
+x = BST5(0, 1, 2, 3, 4, 5, 6, 7)
+list(x.to_lists())
+# [[0], [1], [2], [3], [4], [5], [6], [7]]
+
+x = BST5(5, 2, 8, 1, 3)
+list(x.to_lists())
+# [[5], [2, 8], [1, 3]]
