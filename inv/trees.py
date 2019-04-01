@@ -273,7 +273,7 @@ class BST5(BST):
 
         pairs = self._to_lists(Queue([(self.head, 0)]))
         for _, node_level_pairs in tz.groupby(getlevel, pairs).items():
-            yield [nodes for nodes, _ in node_level_pairs]
+            yield [node for node, _ in node_level_pairs]
 
 x = BST5(0, 1, 2, 3, 4, 5, 6, 7)
 list(x.to_lists())
@@ -282,3 +282,28 @@ list(x.to_lists())
 x = BST5(5, 2, 8, 1, 3)
 list(x.to_lists())
 # [[5], [2, 8], [1, 3]]
+
+# * 6. Check if a binary tree is balanced
+
+class BST6(BST5):
+    @property
+    def balanced(self):
+        getlevel = lambda x: x[1]
+
+        if not self.head:
+            return True
+
+        pairs = self._to_lists(Queue([(self.head, 0)]))
+        pairs_by_level = list(tz.groupby(getlevel, pairs).items())
+
+        for level, node_level_pairs in pairs_by_level[:-1]:
+            if len(node_level_pairs) != 2 ** level:
+                return False
+
+        return True
+
+x = BST6(5, 3, 8, 1, 4)
+x.balanced
+
+x = BST6(5, 3, 8, 9, 10)
+x.balanced
