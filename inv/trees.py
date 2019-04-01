@@ -342,3 +342,42 @@ x.head.left = Node(8)
 x.head.right = Node(5)
 x.valid
 # False
+
+# * 8. Find the in-order succession of a given node in a BST
+
+class BST8(BST):
+    # In-order: left - root - right
+
+    # Because my implementations are lazy, this is just as fast as embedding
+    # the checks into the implementation. ie. this is perfect already
+
+    # Unless the BST condition makes it possible to do it quicker...
+    def successor(self, node):
+        if not self.head:
+            return
+
+        ordered = self.in_order
+        for item in ordered:
+            if item != node:
+                continue
+
+            try:
+                return next(ordered)
+            except StopIteration:
+                return
+
+    def successor_smart(self, node):
+        if node.left:
+            pass
+
+        if node.right:
+            return left_most_node
+
+
+x = BST8(5, 9, 8, 4, 6, 7)
+ordered = list(x.in_order)
+node = ordered[2]
+
+x.successor(node)
+
+# * 9. Find the 2nd-largest node in a BST
