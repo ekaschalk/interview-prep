@@ -33,6 +33,22 @@ class Node(object):
     def find(self, item):
         return self.left if item < self else self.right
 
+# ** Queue
+
+class Queue(collections.deque):
+    def enqueue(self, x):
+        self.appendleft(x)
+
+    def dequeue(self):
+        return self.pop()
+
+    def dequeue_all(self):
+        while self:
+            yield self.dequeue()
+
+    def peek(self):
+        return self[0]
+
 # ** BST
 
 class BST(object):
@@ -67,20 +83,22 @@ class BST(object):
     def _insert_left(self, item, node):
         if node.left is None:
             node.left = Node(item)
-        else:
-            self._insert(item, node.left)
+            return
+
+        return self._insert(item, node.left)
 
     def _insert_right(self, item, node):
         if node.right is None:
             node.right = Node(item)
-        else:
-            self._insert(item, node.right)
+            return
+
+        return self._insert(item, node.right)
 
     def _insert(self, item, node):
         if item <= node:
-            self._insert_left(item, node)
-        else:
-            self._insert_right(item, node)
+            return self._insert_left(item, node)
+
+        return self._insert_right(item, node)
 
     def insert(self, item):
         if self.head is None:
@@ -93,6 +111,7 @@ class BST(object):
         pass
 
     # ** Traversal
+    # *** DFS
 
     def _in_order(self, node):
         if node.left:
@@ -127,18 +146,39 @@ class BST(object):
     def post_order(self):
         yield from self._post_order(self.head)
 
+    # *** BFS
+
+    def _bfs(self, q):
+        if not q:
+            return
+
+        node = q.dequeue()
+        yield node
+
+        if node.left:
+            q.enqueue(node.left)
+        if node.right:
+            q.enqueue(node.right)
+
+        yield from self._bfs(q)
+
     @property
-    def level_ordered(self):
-        pass
+    def bfs(self):
+        if not self.head:
+            return
+
+        yield from self._bfs(Queue([self.head]))
 
 
 x = BST(5, 2, 8, 1, 3)
-pre = [5, 2, 1, 3, 8]
-in_ = [1, 2, 3, 5, 8]
-post = [1, 3, 2, 8, 5]
-# assert(post == list(x.post_order))
+
+# pre = [5, 2, 1, 3, 8]
+# in_ = [1, 2, 3, 5, 8]
+# post = [1, 3, 2, 8, 5]
+# bfs = [5, 2, 8, 1, 3]
 
 # x = BST(1, 2, 3, 4, 5)
 # pre = [1, 2, 3, 4, 5]
 # in_ = [1, 2, 3, 4, 5]
 # post = [5, 4, 3, 2, 1]
+# bfs = [1, 2, 3, 4, 5]
