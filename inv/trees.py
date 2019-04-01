@@ -7,7 +7,7 @@ import itertools
 import functools
 import toolz as tz
 
-# * x. Implement a Binary Search Tree
+# * 1+2. Implement a Binary Search Tree (BFS and DFS included)
 # ** Node
 
 @functools.total_ordering
@@ -182,3 +182,28 @@ x = BST(5, 2, 8, 1, 3)
 # in_ = [1, 2, 3, 4, 5]
 # post = [5, 4, 3, 2, 1]
 # bfs = [1, 2, 3, 4, 5]
+
+# * 3. Determine the height of a tree
+
+class BST3(BST):
+    def _height(self, node, i):
+        yield node, i
+        if node.left:
+            yield from self._height(node.left, i+1)
+        if node.right:
+            yield from self._height(node.right, i+1)
+
+    @property
+    def height(self):
+        just_height = lambda x: x[1]
+
+        if not self.head:
+            return 0
+
+        return just_height(max(self._height(self.head, 1),
+                               key=just_height))
+
+x = BST3(5, 2, 8, 1, 3)
+# x.height == 3
+x = BST3(1, 2, 3, 4, 5)
+# x.height == 5
