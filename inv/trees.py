@@ -207,3 +207,43 @@ x = BST3(5, 2, 8, 1, 3)
 # x.height == 3
 x = BST3(1, 2, 3, 4, 5)
 # x.height == 5
+
+# * 4. Create a BST with minimal height from a sorted array
+
+class BST4(BST3):
+    def __init__(self, *sorted_items):
+        self.head = None
+
+        self.insert_sorted(sorted_items)
+
+    def _insert_sorted(self, items, q):
+        if not q:
+            return
+
+        a, b = q.pop()
+        m = a + ((b - a) // 2)
+
+        if b-a == 0:
+            return
+
+        self.insert(items[m])
+
+        q.enqueue((a, m))
+        q.enqueue((m+1, b))
+
+        self._insert_sorted(items, q)
+
+    def insert_sorted(self, items):
+        if not items:
+            return
+
+        q = Queue()
+        q.enqueue((0, len(items)))
+
+        self._insert_sorted(items, q)
+
+x = BST4(0, 1, 2, 3, 4, 5, 6)
+# x.height == 3
+
+x = BST4(0, 1, 2, 3, 4, 5, 6, 7)
+# x.height == 4
