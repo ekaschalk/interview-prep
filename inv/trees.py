@@ -307,3 +307,38 @@ x.balanced
 
 x = BST6(5, 3, 8, 9, 10)
 x.balanced
+
+# * 7. Check if tree is a valid binary search tree
+
+class BST7(BST):
+    def _valid(self, node):
+        if node.left:
+            if node.left > node:
+                raise StopIteration
+            return self._valid(node.left)
+
+        if node.right:
+            if node.right <= node:
+                raise StopIteration
+            return self._valid(node.right)
+        return True
+
+    @property
+    def valid(self):
+        if not self.head:
+            return True
+
+        try:
+            return self._valid(self.head)
+        except StopIteration:
+            return False
+
+x = BST7(5, 5, 8, 4, 6, 7)
+x.valid
+# True
+
+x = BST7(5)
+x.head.left = Node(8)
+x.head.right = Node(5)
+x.valid
+# False
