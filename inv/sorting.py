@@ -101,6 +101,7 @@ def quicksort(xs):
 
 # print(quicksort([1, 2, 5, 3, -120]))
 
+
 # * 4. Merge Sort
 
 def _mergesort(xs, left, right):
@@ -130,4 +131,38 @@ def mergesort(xs):
     "?? - Recursively: Merge sorted subarrays"
     return _mergesort(xs, 0, len(xs))
 
-print(mergesort([1, 2, 5, 3, -12, -10]))
+# print(mergesort([1, 2, 5, 3, -12, -10]))
+
+
+# * 5. Radix Sort
+
+# Most significant digit version:
+# 1. Sort on most sig digit
+# 2. Bucket elements with same digit
+# 3. Recursively sort each bucket
+# 4. Concatenate buckets
+
+def _radixsort(xs, exp, base=10):
+    if exp < 0:
+        return xs
+
+    bins = collections.defaultdict(list)
+    for x in xs:
+        digit = x // base**exp % base
+        bins[digit].append(x)
+
+    sorted_xs = []
+    for _, group in sorted(bins.items(), key=lambda digit_group: digit_group[0]):
+        sorted_xs.extend(_radixsort(group, exp-1, base=base))
+
+    return sorted_xs
+
+def radixsort(xs, base=10):
+    max_exp = math.floor(math.log(max(xs), base))
+
+    return _radixsort(xs, max_exp, base=base)
+
+
+# print(radixsort([1, 2, 5, 3, -12, -10]))
+print(radixsort([170, 45, 75, 90, 2, 802, 2, 66]))
+print(radixsort([1, 2, 5, 3, 12, 10, 400, 403, 412]))
