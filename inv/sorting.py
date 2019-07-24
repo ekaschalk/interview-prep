@@ -166,3 +166,47 @@ def radixsort(xs, base=10):
 # print(radixsort([1, 2, 5, 3, -12, -10]))
 print(radixsort([170, 45, 75, 90, 2, 802, 2, 66]))
 print(radixsort([1, 2, 5, 3, 12, 10, 400, 403, 412]))
+
+
+# * 6. Sort an Array of strings so anagrams are next to eachother
+
+# An anagram is a reordering of a string
+# Answer:
+# 1. Sort each string
+# 2. Sort the sorted strings
+# 3. Transform above back to original representation
+
+def anagramsort(xs):
+    pairs = [(x, "".join(sorted(x))) for x in xs]
+
+    return [x for x, _ in sorted(pairs, key=lambda xy: xy[1])]
+
+# Above solves the challenge, but isn't stable (though not a requirement)
+# To solve stably:
+# 1. Do (original_ix, sorted_str) instead of (x, sorted_str)
+# 2. Group the ixs by equal sorted_str
+# 3. Concatenate the xs identifiyed by the ix_groups in order
+# Note: To get their result, just do one last sort
+
+def anagramsort_stable(xs):
+    groups = collections.defaultdict(list)
+    for ix, x in enumerate(xs):
+        sorted_x = "".join(sorted(x))
+        groups[sorted_x].append(ix)
+
+    sorted_xs = []
+    for _, ixs in groups.items():
+        sorted_xs.extend(xs[ix] for ix in ixs)
+        # sorted_xs.extend(sorted(xs[ix] for ix in ixs))  # for their result
+
+    return sorted_xs
+
+
+# print(anagramsort(['ram', 'act', 'arm', 'bat', 'cat', 'tab']))
+# print(anagramsort_stable(['ram', 'act', 'arm', 'bat', 'cat', 'tab']))
+# ['arm', 'ram', 'act', 'cat', 'bat', 'tab']
+
+# * 7. Find an item in a sorted, rotated array
+
+# It could be rotated multiple times
+# Do it in logn
