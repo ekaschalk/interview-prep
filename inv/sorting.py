@@ -164,8 +164,8 @@ def radixsort(xs, base=10):
 
 
 # print(radixsort([1, 2, 5, 3, -12, -10]))
-print(radixsort([170, 45, 75, 90, 2, 802, 2, 66]))
-print(radixsort([1, 2, 5, 3, 12, 10, 400, 403, 412]))
+# print(radixsort([170, 45, 75, 90, 2, 802, 2, 66]))
+# print(radixsort([1, 2, 5, 3, 12, 10, 400, 403, 412]))
 
 
 # * 6. Sort an Array of strings so anagrams are next to eachother
@@ -207,6 +207,51 @@ def anagramsort_stable(xs):
 # ['arm', 'ram', 'act', 'cat', 'bat', 'tab']
 
 # * 7. Find an item in a sorted, rotated array
+# ** Commentary
 
 # It could be rotated multiple times
+# (A single rotation -> one movement of the indices -> So just 1 pivot point)
 # Do it in logn
+
+# How to find pivot?
+# Check the first/end values of some set
+# If first > end:
+#   a pivot is in this set
+#   split in two and check the subsets
+#   if neither have a rotation:
+#      Then we found the pivot (the end/beginning of left/right subsets)
+#   otherwise at most one has a rotation
+#      recurse on the one with the rotation
+
+# if first or end == x:
+#   done (first such match return)
+
+# If first < end:
+#   not a rotation
+#   if first < x < end:
+#      reduced to just a standard binary search in this subset
+#   otherwise skip it
+
+# ** Implementation
+
+def _rotsearch(x, xs, l, r):
+    low, high = xs[l], xs[r]
+
+    if l >= r:
+        return x == low and l
+
+    rotated = low > high
+    if not rotated and (x < low or x > high):
+        return
+
+    m = (r-l)//2 + l
+
+    return _rotsearch(x, xs, l, m) or _rotsearch(x, xs, m+1, r)
+
+def rotsearch(x, xs):
+    return _rotsearch(x, xs, 0, len(xs)-1)
+
+
+# print(rotsearch(7, [5, 6, 7, 8, 1, 2, 3, 4])) # 2
+# print(rotsearch(1, [7, 8, 1, 2, 3, 4, 5, 6])) # 2
+# print(rotsearch(5, [7, 8, 1, 2, 3, 4, 5, 6])) # 6
